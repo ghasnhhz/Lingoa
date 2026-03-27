@@ -17,10 +17,27 @@ const roomSocket      = require('./socket/roomSocket')
 
 const app    = express()
 const server = http.createServer(app)
-const io     = new Server(server, {
+
+const allowedOrigins = [
+  'http://localhost:3000',           // local dev
+  'https://lingoa-pi.vercel.app'    // deployed frontend
+]
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS blocked for ${origin}`))
+    }
+  },
+  credentials: true
+}))
+
+const io = new Server(server, {
   cors: {
-    origin:      'http://localhost:3000',
-    methods:     ['GET', 'POST'],
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
     credentials: true,
   }
 })

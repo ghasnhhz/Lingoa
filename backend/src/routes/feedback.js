@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Feedback message is required' })
     }
 
-    const token  = process.env.TELEGRAM_BOT_TOKEN_FEEDBACK
+    const token  = process.env.TELEGRAM_BOT_TOKEN
     const chatId = process.env.TELEGRAM_CHAT_ID
 
     if (!token || !chatId) {

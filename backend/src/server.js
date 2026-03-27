@@ -1,4 +1,5 @@
 require('dotenv').config({quiet: true})
+require('./bot')
 const express    = require('express')
 const cors       = require('cors')
 const mongoose   = require('mongoose')
@@ -49,7 +50,7 @@ roomSocket(io)
 // ── Connect to MongoDB then start ─────────────────────────────
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected')
+    console.log('MongoDB connected')
     server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
   })
   .catch(err => { console.error('MongoDB error:', err.message); process.exit(1) })

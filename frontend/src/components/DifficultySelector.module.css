@@ -1,0 +1,91 @@
+.grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 18px 20px;
+    background: white;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all var(--transition-spring);
+    box-shadow: var(--shadow-xs);
+    min-width: 140px;
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .emoji {
+    font-size: 24px;
+    line-height: 1;
+  }
+  
+  .label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  
+  .desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  
+  /* Active states per level */
+  .card.active.beginner {
+    border-color: #16a34a;
+    background: #f0fdf4;
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.2);
+  }
+  
+  .card.active.intermediate {
+    border-color: #d97706;
+    background: #fffbeb;
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.2);
+  }
+  
+  .card.active.advanced {
+    border-color: var(--rose-500);
+    background: #fff1f2;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.2);
+  }
+  
+  /* Hover states */
+  .card.beginner:hover     { border-color: #86efac; }
+  .card.intermediate:hover { border-color: #fcd34d; }
+  .card.advanced:hover     { border-color: var(--rose-400); }
+  
+  .check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @media (max-width: 600px) {
+    .card { min-width: 100px; padding: 14px 12px; }
+  }

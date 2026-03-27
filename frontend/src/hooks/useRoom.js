@@ -1,7 +1,10 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { io } from 'socket.io-client'
 
-let socketInstance = null
+let socketInstance = io(
+  import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  { transports: ['websocket'], autoConnect: false }
+)
 
 export function getSocket() {
   if (!socketInstance) {

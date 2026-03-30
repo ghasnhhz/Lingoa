@@ -35,6 +35,7 @@ function HomeRoute() {
 }
 
 export default function App() {
+  s
   useEffect(() => {
     logEvent(analytics, 'app_open')
   }, [])

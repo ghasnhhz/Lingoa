@@ -69,7 +69,6 @@ export default function RoomLobbyPage() {
 
   const handleStart = () => {
     if (!topic.trim()) return toast.error('Please enter a topic')
-    if (!field) return toast.error('Please select a field')
     emit('room:start', { code, field: FIELD, topic: topic.trim(), count, timePerQuestion: timePQ, userId: user?.id, difficulty })
   }
 

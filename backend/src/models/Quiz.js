@@ -20,7 +20,7 @@ const quizSchema = new mongoose.Schema(
     user:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     field:     { type: String, required: true },
     topic:     { type: String, required: true },
-    mode:      { type: String, enum: ['quiz', 'learn'], default: 'quiz' },
+    mode:      { type: String, enum: ['quiz', 'learn', 'room'], default: 'quiz' },
     questions: { type: [questionSchema], required: true },
 
     // Filled after submission

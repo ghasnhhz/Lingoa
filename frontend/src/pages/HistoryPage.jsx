@@ -60,37 +60,40 @@ export default function HistoryPage() {
           </div>
         ) : (
           <div className={styles.list}>
-            {history.map((item) => (
-              <Link
-                key={item.resultId}
-                to={`/results/${item.resultId}`}
-                className={styles.item}
-              >
-                <div className={styles.itemIcon} style={{
-                  background: item.mode === 'learn' ? 'linear-gradient(135deg,#f0fdf4,#dcfce7)' : 'var(--indigo-50)',
-                  color: item.mode === 'learn' ? '#16a34a' : 'var(--indigo-500)',
-                }}>
-                  <BookOpen size={18} />
-                </div>
-                <div className={styles.itemInfo}>
-                  <span className={styles.itemTopic}>{item.topic}</span>
-                  <div className={styles.itemMeta}>
-                    <span className={`${styles.modeBadge} ${item.mode === 'learn' ? styles.modeBadgeLearn : styles.modeBadgeQuiz}`}>
-                      {item.mode === 'learn' ? '🎓 Learn & Quiz' : '⚡ Quick Quiz'}
-                    </span>
-                    <span className={styles.metaDot}>·</span>
-                    <span className={styles.itemField}>{item.field}</span>
-                    <span className={styles.metaDot}>·</span>
-                    <Clock size={12} />
-                    <span>{formatDate(item.createdAt)}</span>
+            {history.map((item) => {
+              const modeConfig = {
+                learn: { bg: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', color: '#16a34a', label: '🎓 Learn & Quiz', badgeClass: styles.modeBadgeLearn },
+                room:  { bg: 'linear-gradient(135deg,#fdf4ff,#f3e8ff)', color: '#a855f7', label: '🏆 Live Room',    badgeClass: styles.modeBadgeRoom  },
+                quiz:  { bg: 'var(--indigo-50)',                         color: 'var(--indigo-500)', label: '⚡ Quick Quiz', badgeClass: styles.modeBadgeQuiz  },
+              }
+              const cfg = modeConfig[item.mode] || modeConfig.quiz
+              return (
+                <Link
+                  key={item.resultId}
+                  to={`/results/${item.resultId}`}
+                  className={styles.item}
+                >
+                  <div className={styles.itemIcon} style={{ background: cfg.bg, color: cfg.color }}>
+                    <BookOpen size={18} />
                   </div>
-                </div>
-                <div className={styles.itemRight}>
-                  <ScoreBadge score={item.score} total={item.total} />
-                  <ChevronRight size={16} className={styles.arrow} />
-                </div>
-              </Link>
-            ))}
+                  <div className={styles.itemInfo}>
+                    <span className={styles.itemTopic}>{item.topic}</span>
+                    <div className={styles.itemMeta}>
+                      <span className={`${styles.modeBadge} ${cfg.badgeClass}`}>
+                        {cfg.label}
+                      </span>
+                      <span className={styles.metaDot}>·</span>
+                      <Clock size={12} />
+                      <span>{formatDate(item.createdAt)}</span>
+                    </div>
+                  </div>
+                  <div className={styles.itemRight}>
+                    <ScoreBadge score={item.score} total={item.total} />
+                    <ChevronRight size={16} className={styles.arrow} />
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>

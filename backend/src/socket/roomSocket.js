@@ -308,10 +308,58 @@ async function endRoom(room, io, code) {
   await room.save()
 
   const leaderboard = buildLeaderboard(room)
+
+  // Save each student's result to Quiz collection for history
+  try {
+    const Quiz = require('../models/Quiz')
+    const { v4: uuidv4 } = require('uuid')
+
+    const savePromises = room.students
+      .filter(s => !s.kicked && s.userId)
+      .map(async (student) => {
+        const resultId = uuidv4()
+        const results  = room.questions.map((q, i) => {
+          const selectedIndex = Number(student.answers?.get?.(String(i)) ?? student.answers?.[i] ?? -1)
+          const isCorrect     = selectedIndex === q.correctIndex
+          return {
+            question:      q.question,
+            options:       Array.from(q.options),
+            correctIndex:  q.correctIndex,
+            selectedIndex,
+            isCorrect,
+            explanation:   '',
+          }
+        })
+
+        await Quiz.create({
+          user:      student.userId,
+          field:     room.field,
+          topic:     room.topic,
+          mode:      'room',
+          questions: room.questions.map(q => ({
+            question:     q.question,
+            options:      Array.from(q.options),
+            correctIndex: q.correctIndex,
+          })),
+          submitted: true,
+          score:     student.score,
+          total:     room.questions.length,
+          resultId,
+          results,
+        })
+      })
+
+    await Promise.all(savePromises)
+    console.log(`💾 Saved ${savePromises.length} room results to history`)
+  } catch (err) {
+    console.error('Failed to save room results (non-fatal):', err.message)
+  }
+
   io.to(code).emit('room:leaderboard', {
     leaderboard,
     topic: room.topic,
     field: room.field,
+    roomCode: code,
   })
   console.log(`🏁 Room ${code} finished`)
 }

@@ -132,7 +132,7 @@ module.exports = (io) => {
     })
 
     // ── room:start ────────────────────────────────────────────
-    socket.on('room:start', async ({ code, field, topic, count, timePerQuestion, userId }) => {
+    socket.on('room:start', async ({ code, field, topic, count, timePerQuestion, userId, difficulty }) => {
       try {
         const room = await Room.findOne({ code: code.toUpperCase() })
         if (!room) return socket.emit('room:error', { message: 'Room not found' })

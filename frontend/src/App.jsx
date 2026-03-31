@@ -35,7 +35,7 @@ function HomeRoute() {
 }
 
 export default function App() {
-  s
+  console.log('API URL:', import.meta.env.VITE_API_URL)
   useEffect(() => {
     logEvent(analytics, 'app_open')
   }, [])

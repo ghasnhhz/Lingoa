@@ -44,8 +44,11 @@ export default function RoomLobbyPage() {
     'room:generating': () => setGenerating(true),
     'room:quiz_started': (data) => {
       navigate(`/room/${code}/quiz`, {
-        state: { questions: data.questions, timePerQuestion: data.timePerQuestion,
-          topic: data.topic, field: data.field, studentId, isTeacher, userId: user?.id }
+        state: {
+          questions: data.questions, timePerQuestion: data.timePerQuestion,
+          topic: data.topic, field: data.field, studentId, isTeacher,
+          userId: user?.id, students
+        }
       })
     },
     'room:error': (data) => {
@@ -69,6 +72,7 @@ export default function RoomLobbyPage() {
 
   const handleStart = () => {
     if (!topic.trim()) return toast.error('Please enter a topic')
+    if (!field) return toast.error('Please select a field')
     emit('room:start', { code, field: FIELD, topic: topic.trim(), count, timePerQuestion: timePQ, userId: user?.id, difficulty })
   }
 

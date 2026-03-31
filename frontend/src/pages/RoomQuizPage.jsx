@@ -7,7 +7,7 @@ import styles from './RoomQuizPage.module.css'
 
 const OPTION_LABELS = ['A','B','C','D']
 
-function QuestionTimer({ seconds, onExpire, key: timerKey }) {
+function QuestionTimer({ seconds, onExpire, timerKey }) {
   const [remaining, setRemaining] = useState(seconds)
   const pct = (remaining / seconds) * 100
   const warn = pct < 30
@@ -44,7 +44,10 @@ export default function RoomQuizPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers]           = useState({})
   const [submitted, setSubmitted]       = useState(false)
-  const [progress, setProgress]         = useState({ finished: 0, total: 0 })
+  const [progress, setProgress]         = useState({
+    finished: 0,
+    total: location.state?.students?.length || 0
+  })
   const [submitting, setSubmitting]     = useState(false)
 
   const { emit } = useRoom({
@@ -99,6 +102,7 @@ export default function RoomQuizPage() {
           {!submitted && !isTeacher && (
             <QuestionTimer
               key={currentIndex}
+              timerKey={currentIndex}
               seconds={timePerQuestion}
               onExpire={handleTimeUp}
             />

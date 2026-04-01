@@ -70,8 +70,8 @@ export default function App() {
             {/* Rooms */}
             <Route path="/room"               element={<P><RoomCreatePage /></P>} />
             <Route path="/room/:code"         element={<RoomJoinPage />} />
-            <Route path="/room/:code/lobby"   element={<P><RoomLobbyPage /></P>} />
-            <Route path="/room/:code/quiz"    element={<P><RoomQuizPage /></P>} />
+            <Route path="/room/:code/lobby"   element={<RoomLobbyPage />} />
+            <Route path="/room/:code/quiz"    element={<RoomQuizPage />} />
             <Route path="/room/:code/results" element={<RoomResultsPage />} />
           </Routes>
           <FeedbackButton />

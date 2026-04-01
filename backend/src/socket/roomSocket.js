@@ -11,15 +11,9 @@ const DIFFICULTY_PROMPTS = {
 // ── Generate questions via Groq ───────────────────────────────
 async function generateQuestions(field, topic, count, difficulty = 'intermediate') {
   const diffNote = DIFFICULTY_PROMPTS[difficulty] || DIFFICULTY_PROMPTS.intermediate
-  const prompt = `Generate exactly ${count} multiple choice questions about "${topic}" in the field of "${field}".
-${diffNote}
-Each question must have exactly 4 options, only one correct.
-Respond with ONLY valid JSON, no markdown:
-{
-  "questions": [
-    { "question": "...", "options": ["A","B","C","D"], "correctIndex": 0 }
-  ]
-}`
+  const prompt = `Generate exactly ${count} MCQ questions about "${topic}" (field: ${field}). ${diffNote}
+4 options each, one correct. Respond ONLY with valid JSON:
+{"questions":[{"question":"...","options":["A","B","C","D"],"correctIndex":0}]}`
   const res     = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [{ role: 'user', content: prompt }],
@@ -309,56 +303,79 @@ async function endRoom(room, io, code) {
 
   const leaderboard = buildLeaderboard(room)
 
-  // Save each student's result to Quiz collection for history
   try {
     const Quiz = require('../models/Quiz')
     const { v4: uuidv4 } = require('uuid')
 
-    const savePromises = room.students
-      .filter(s => !s.kicked && s.userId)
+    const activeStudents = room.students.filter(s => !s.kicked)
+    const questions = room.questions.map(q => ({
+      question:     q.question,
+      options:      Array.from(q.options),
+      correctIndex: q.correctIndex,
+    }))
+
+    // Save each logged-in student's result
+    const studentPromises = activeStudents
+      .filter(s => s.userId)
       .map(async (student) => {
-        const resultId = uuidv4()
-        const results  = room.questions.map((q, i) => {
-          const selectedIndex = Number(student.answers?.get?.(String(i)) ?? student.answers?.[i] ?? -1)
-          const isCorrect     = selectedIndex === q.correctIndex
+        const results = room.questions.map((q, i) => {
+          const selectedIndex = Number(
+            student.answers?.get?.(String(i)) ??
+            student.answers?.[i] ?? -1
+          )
           return {
             question:      q.question,
             options:       Array.from(q.options),
             correctIndex:  q.correctIndex,
             selectedIndex,
-            isCorrect,
+            isCorrect:     selectedIndex === q.correctIndex,
             explanation:   '',
           }
         })
-
-        await Quiz.create({
-          user:      student.userId,
-          field:     room.field,
-          topic:     room.topic,
-          mode:      'room',
-          questions: room.questions.map(q => ({
-            question:     q.question,
-            options:      Array.from(q.options),
-            correctIndex: q.correctIndex,
-          })),
-          submitted: true,
-          score:     student.score,
-          total:     room.questions.length,
-          resultId,
-          results,
+        return Quiz.create({
+          user: student.userId, field: room.field, topic: room.topic,
+          mode: 'room', questions, submitted: true,
+          score: student.score, total: room.questions.length,
+          resultId: uuidv4(), results,
         })
       })
 
-    await Promise.all(savePromises)
-    console.log(`💾 Saved ${savePromises.length} room results to history`)
+    // Save teacher's room summary — leaderboard as results
+    const teacherResultId = uuidv4()
+    const teacherResults  = activeStudents.map(s => ({
+      question:      s.name,                   // student name as "question"
+      options:       [''],
+      correctIndex:  0,
+      selectedIndex: s.score,                  // score stored here
+      isCorrect:     s.finished,
+      explanation:   `Score: ${s.score}/${room.questions.length}`,
+    }))
+
+    const teacherPromise = Quiz.create({
+      user:      room.teacher,
+      field:     room.field,
+      topic:     `Room ${code} — ${room.topic}`,
+      mode:      'room_host',
+      questions,
+      submitted: true,
+      score:     activeStudents.filter(s => s.finished).length,
+      total:     activeStudents.length,
+      resultId:  teacherResultId,
+      results:   teacherResults,
+      roomCode:  code,
+      leaderboardSnapshot: leaderboard,
+    })
+
+    await Promise.all([...studentPromises, teacherPromise])
+    console.log(`💾 Saved ${activeStudents.length} student + 1 teacher room records`)
   } catch (err) {
     console.error('Failed to save room results (non-fatal):', err.message)
   }
 
   io.to(code).emit('room:leaderboard', {
     leaderboard,
-    topic: room.topic,
-    field: room.field,
+    topic:    room.topic,
+    field:    room.field,
     roomCode: code,
   })
   console.log(`🏁 Room ${code} finished`)

@@ -62,9 +62,10 @@ export default function HistoryPage() {
           <div className={styles.list}>
             {history.map((item) => {
               const modeConfig = {
-                learn: { bg: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', color: '#16a34a', label: '🎓 Learn & Quiz', badgeClass: styles.modeBadgeLearn },
-                room:  { bg: 'linear-gradient(135deg,#fdf4ff,#f3e8ff)', color: '#a855f7', label: '🏆 Live Room',    badgeClass: styles.modeBadgeRoom  },
-                quiz:  { bg: 'var(--indigo-50)',                         color: 'var(--indigo-500)', label: '⚡ Quick Quiz', badgeClass: styles.modeBadgeQuiz  },
+                learn:     { bg: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', color: '#16a34a', label: '🎓 Learn & Quiz', badgeClass: styles.modeBadgeLearn },
+                room:      { bg: 'linear-gradient(135deg,#fdf4ff,#f3e8ff)', color: '#a855f7', label: '🏆 Live Room',    badgeClass: styles.modeBadgeRoom  },
+                room_host: { bg: 'linear-gradient(135deg,#fdf4ff,#f3e8ff)', color: '#a855f7', label: '👨‍🏫 Room Host',   badgeClass: styles.modeBadgeRoom  },
+                quiz:      { bg: 'var(--indigo-50)',                         color: 'var(--indigo-500)', label: '⚡ Quick Quiz', badgeClass: styles.modeBadgeQuiz  },
               }
               const cfg = modeConfig[item.mode] || modeConfig.quiz
               return (

@@ -19,9 +19,10 @@ function ScoreBar({ percent }) {
 }
 
 const MODE_LABELS = {
-  quiz:  { label: '⚡ Quick Quiz',   color: 'var(--indigo-50)', text: 'var(--indigo-600)' },
-  learn: { label: '🎓 Learn & Quiz', color: '#f0fdf4',          text: '#16a34a'           },
-  room:  { label: '🏆 Live Room',    color: '#f3e8ff',          text: '#a855f7'           },
+  quiz:      { label: '⚡ Quick Quiz',   color: 'var(--indigo-50)', text: 'var(--indigo-600)' },
+  learn:     { label: '🎓 Learn & Quiz', color: '#f0fdf4',          text: '#16a34a'           },
+  room:      { label: '🏆 Live Room',    color: '#f3e8ff',          text: '#a855f7'           },
+  room_host: { label: '👨‍🏫 Room Host',   color: '#f3e8ff',          text: '#a855f7'           },
 }
 
 export default function DashboardPage() {

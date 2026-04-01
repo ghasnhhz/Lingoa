@@ -15,26 +15,12 @@ const DIFFICULTY_PROMPTS = {
 const generateQuestionsWithAI = async (field, topic, count, difficulty = 'intermediate') => {
   const difficultyInstruction = DIFFICULTY_PROMPTS[difficulty] || DIFFICULTY_PROMPTS.intermediate
 
-  const prompt = `You are a quiz generator. Generate exactly ${count} multiple choice questions about "${topic}" in the field of "${field}".
+  const prompt = `Generate exactly ${count} MCQ questions about "${topic}" (field: ${field}). Difficulty: ${difficultyInstruction}
 
-${difficultyInstruction}
+Rules: 4 options each, one correct, no ambiguity.
 
-Rules:
-- Each question must have exactly 4 answer options
-- Only one option is correct
-- Be specific and clear, no ambiguous questions
-
-Respond with ONLY valid JSON, no explanation, no markdown, no backticks.
-Use exactly this format:
-{
-  "questions": [
-    {
-      "question": "Question text here?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctIndex": 0
-    }
-  ]
-}`
+Respond ONLY with valid JSON:
+{"questions":[{"question":"...","options":["A","B","C","D"],"correctIndex":0}]}`
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',

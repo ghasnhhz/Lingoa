@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className={styles.inner}>
         <Link to={user ? '/dashboard' : '/'} className={styles.logo}>
           <div className={styles.logoIcon}><Brain size={18} /></div>
-          <span className={styles.logoText}>Lingoa</span>
+          <span className={styles.logoText}>QuizMind</span>
         </Link>
 
         <div className={styles.actions}>

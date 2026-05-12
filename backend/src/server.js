@@ -59,3 +59,4 @@ mongoose.connect(process.env.MONGO_URI)
     server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`))
   })
   .catch(err => { console.error('❌ MongoDB error:', err.message); process.exit(1) })
+  
